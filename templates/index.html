@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Condition Predictor</title>
+    <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .prediction-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .heart-attack {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .ulcer {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+
+    <body>
+        <div id="content"></div>
+    
+        
+
+
+
+    <div class="container">
+        <h1 class="text-center mb-4">Health Condition Predictor</h1>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="prediction-form">
+                    <h3>Enter Patient Symptoms</h3>
+                    <form id="healthForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Age</label>
+                                <input type="number" class="form-control" name="age" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Gender</label>
+                                <select class="form-control" name="sex" required>
+                                    <option value="1">Male</option>
+                                    <option value="0">Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">FABP3</label>
+                                <input type="number" min="0" max="3" class="form-control" name="pain_level" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nausea</label>
+                                <select class="form-control" name="nausea" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Sweating</label>
+                                <select class="form-control" name="sweating" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Chest Pressure</label>
+                                <select class="form-control" name="chest_pressure" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Shortness of Breath</label>
+                                <select class="form-control" name="breath_shortness" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Stomach Pain</label>
+                                <select class="form-control" name="stomach_pain" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">TNF-Alpha</label>
+                                <input type="number" step="0.1" min="0" max="5" class="form-control" name="stomach_acidity" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Weight Loss</label>
+                                <select class="form-control" name="weight_loss" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Vomiting Blood</label>
+                                <select class="form-control" name="vomiting_blood" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Diarrhea</label>
+                                <select class="form-control" name="diearea" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Stress Level (0-10)</label>
+                            <input type="number" step="0.1" min="0" max="10" class="form-control" name="stress_level" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Predict Condition</button>
+                    </form>
+                    <div id="resultBox" class="result-box"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('healthForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('http://localhost:8000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                const resultDiv = document.getElementById('resultBox');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result-box ' + result.prediction.toLowerCase();
+                
+                let conditionText = '';
+                let alertClass = '';
+                
+                switch(result.prediction) {
+                    case 'heart_attack':
+                        conditionText = 'Heart Attack';
+                        alertClass = 'alert-danger';
+                        break;
+                    case 'ulcer':
+                        conditionText = 'Ulcer';
+                        alertClass = 'alert-warning';
+                        break;
+                    case 'normal':
+                        conditionText = 'Normal';
+                        alertClass = 'alert-success';
+                        break;
+                }
+
+                resultDiv.innerHTML = `
+                    <div class="alert ${alertClass}">
+                        <h4>Prediction: ${conditionText}</h4>
+                        <p>Confidence: ${(result.probability * 100).toFixed(2)}%</p>
+                        <p>${result.message}</p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error making prediction. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
